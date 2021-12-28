@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+
+  postgressql:
+    build: ./postgressql
+    container_name: postgressql
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: XXX
+      POSTGRES_DB: freshrss
+    volumes:
+      - ./postgressql:/docker-entrypoint-initdb.d/
+      - ./postgressql/data:/var/lib/postgresql/data
+
+  freshrss:
+      image: lscr.io/linuxserver/freshrss
+      container_name: freshrss
+      environment:
+        - PUID=1000
+        - PGID=1000
+        - TZ=Europe/Berlin
+      volumes:
+        - ./freshRSS/config:/config
+        - ./freshRSS/data:/data
+      ports:
+        - 80:80
+      restart: unless-stopped
